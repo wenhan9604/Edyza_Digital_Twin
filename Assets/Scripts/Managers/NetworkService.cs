@@ -11,8 +11,8 @@ public class NetworkService
     private IEnumerator CallAPI(string url, Action<string> callback)
     {
         UnityWebRequest www = UnityWebRequest.Get(url);
-        yield return www.SendWebRequest();
 
+        yield return www.SendWebRequest();
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);

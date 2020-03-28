@@ -9,16 +9,25 @@ public class SensorManager : MonoBehaviour, IGameManager
 {
     public ManagerStatus status { get; private set; }
     private NetworkService _network;
+
+    public delegate void SensorLayoutUpdated();
+    public static event SensorLayoutUpdated OnSensorLayoutUpdated;
+    public delegate void SensorTempUpdated();
+    public static event SensorTempUpdated OnSensorTempUpdated;
+
     public Items itemsInJson { get; private set; }
     public List<SensorTemp> ListOfSensorTemp { get; private set; }
     public List<int> EpochTimings { get; private set; }
+    public Dictionary<int, double> air_temperature;
+
+
 
     public void Startup(NetworkService service)
     {
         Debug.Log("Sensor Manager starting...");
         _network = service;
+        //StartCoroutine(_network.GetSensorTempJson(107, OnSensorTempLoaded));
         StartCoroutine(_network.GetSensorLayoutJson(OnSensorLayoutLoaded));
-        StartCoroutine(_network.GetSensorTempJson(107, OnSensorTempLoaded));
 
         status = ManagerStatus.Initializing;
     }
@@ -26,8 +35,13 @@ public class SensorManager : MonoBehaviour, IGameManager
     public void OnSensorLayoutLoaded(string data)
     {
         itemsInJson = JsonUtility.FromJson<Items>(data);
-        Messenger.Broadcast(GameEvent.SENSORLAYOUT_UPDATED);
+        if (OnSensorLayoutUpdated != null)
+        {
+            OnSensorLayoutUpdated();
+        }
+        Debug.Log("broadcasting Sensor Layout from OnSensorLayoutLoaded");
 
+        StartCoroutine(_network.GetSensorTempJson(107, OnSensorTempLoaded));
     }
 
     public void OnSensorTempLoaded(string data)
@@ -72,13 +86,42 @@ public class SensorManager : MonoBehaviour, IGameManager
 
             ListOfSensorTemp.Add(Sensor);
         }
-        Messenger.Broadcast(GameEvent.INSTANTIATED_SENSORS);
-        //foreach (var sensorTemp in ListOfSensorTemp)
-        //    Debug.Log(sensorTemp.sensor_name);
-        Debug.Log("number of Sensor Temp: " + ListOfSensorTemp.Count);
+
+        if (OnSensorTempUpdated != null)
+        { 
+            OnSensorTempUpdated();
+        }
+        Debug.Log("broadcasting SensorTemp from OnSensorTempLoaded");
+
         status = ManagerStatus.Started;
     }
 
+    public Dictionary<int, double> GetAirTemp(string GameObjectName)
+    {
+        //Dictionary<int, double> air_temperature;
+        air_temperature = new Dictionary<int, double>();
+
+        foreach (var SensorTemp in ListOfSensorTemp) // store each Temp(key) with each Timings(value) in Dictionary 
+        {
+            if (GameObjectName == SensorTemp.sensor_name)
+            {
+                //Debug.Log("airtemp added for sensor: " + GameObjectName);
+                for (int ii = 0; ii < EpochTimings.Count; ii++)
+                {
+                    air_temperature.Add(EpochTimings[ii], SensorTemp.value[ii]);
+                    Debug.Log("airtemp added for sensor: " + GameObjectName);
+                    Debug.Log("SensorTemp.value: " + SensorTemp.value[ii]); ;
+                }
+                foreach (var items in air_temperature)
+                {
+                    Debug.Log(items.Key + " " + items.Value + " SensorName " + GameObjectName);
+                }
+            }
+            else
+                Debug.Log("Game Object Name: " + GameObjectName + "didnt match with name: " + SensorTemp.sensor_name);
+        }
+        return air_temperature;
+    }
 }
 
 public class SensorTemp //need to put out of main class so that can call in Script:EVSensor using Foreach (SensorTemp varaible)
@@ -91,14 +134,11 @@ public class SensorTemp //need to put out of main class so that can call in Scri
     public string sensor_name { get; set; } // why cant private set?
 }
 
-
-
 [Serializable]
 public class Items
 {
     public Sensor[] items;
 }
-
 
 [Serializable]
 public class Sensor

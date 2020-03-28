@@ -24,16 +24,17 @@ public class SensorLayout : MonoBehaviour
         CanopySensorsParent = new GameObject("CanopySensors");
         OtherSensorsParent = new GameObject("OtherSensors");
 
-        Messenger.AddListener(GameEvent.SENSORLAYOUT_UPDATED, OnSensorLayoutUpdated);
+        SensorManager.OnSensorLayoutUpdated += OnSensorLayoutUpdated;
     }
 
     void OnDestroy()
     {
-        Messenger.RemoveListener(GameEvent.SENSORLAYOUT_UPDATED, OnSensorLayoutUpdated);
+        SensorManager.OnSensorLayoutUpdated -= OnSensorLayoutUpdated;
     }
-    
+
     private void OnSensorLayoutUpdated()
     {
+        Debug.Log("received broad cast Sensor Layout from OnSensorLayoutLoaded");
         InstantiateSensors(Managers.Sensors.itemsInJson.items);
     }
 
@@ -64,6 +65,7 @@ public class SensorLayout : MonoBehaviour
                 Vector3 position = convertPosToMetres(sensor.xpos, sensor.ypos, sensor.zpos);
                 sensorInstance.transform.position = position;
                 sensorInstance.name = sensor.sensor_name;
+                //Debug.Log("EVSensor Created: " + sensorInstance.name);
             }
         }
         //Messenger.Broadcast(GameEvent.INSTANTIATED_SENSORS);
@@ -73,6 +75,7 @@ public class SensorLayout : MonoBehaviour
         SetObjectsAsChild(OtherSensorsParent, OthersList);
 
         SetEVSensorsActiveOnly();
+        //Messenger.Broadcast(GameEvent.INSTANTIATED_SENSORS);
     }
     private Vector3 convertPosToMetres(float input, float input2, float input3)
     {
