@@ -40,7 +40,7 @@ public class SensorLayout : MonoBehaviour
 
     void InstantiateSensors(Sensor[] itemArray)
     {
-        foreach (Sensor sensor in itemArray)
+        foreach (var sensor in itemArray)
         {
             if (sensor.item_name == "Edyza sensor")
             {

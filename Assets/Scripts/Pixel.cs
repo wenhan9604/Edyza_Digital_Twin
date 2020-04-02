@@ -34,7 +34,7 @@ public class Pixel : MonoBehaviour
             {
                 EVSensor EVScript = sensor.GetComponent<EVSensor>();
                 float dist = Vector3.Distance(sensor.transform.position, transform.position); // Optimize: will need to optimize this once temp comes from JSON file
-                numerator += (float)EVScript.Temp / dist;
+                numerator += EVScript.Temp / dist;
                 denom += 1 / dist;
             }
         return numerator / denom;

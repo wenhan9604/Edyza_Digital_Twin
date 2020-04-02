@@ -16,16 +16,18 @@ public class SensorManager : MonoBehaviour, IGameManager
     public static event SensorTempUpdated OnSensorTempUpdated;
 
     public Items itemsInJson { get; private set; }
-    public List<SensorTemp> ListOfSensorTemp { get; private set; }
-    public List<int> EpochTimings { get; private set; }
-    public Dictionary<int, double> air_temperature;
-
-
+    private List<SensorTemp> ListOfSensorTemp { get; set; }
+    private List<int> EpochTimings { get; set; }
+    //public Dictionary<int, float> air_temperature;
 
     public void Startup(NetworkService service)
     {
         Debug.Log("Sensor Manager starting...");
         _network = service;
+
+        ListOfSensorTemp = new List<SensorTemp>();
+        EpochTimings = new List<int>();
+
         //StartCoroutine(_network.GetSensorTempJson(107, OnSensorTempLoaded));
         StartCoroutine(_network.GetSensorLayoutJson(OnSensorLayoutLoaded));
 
@@ -35,20 +37,31 @@ public class SensorManager : MonoBehaviour, IGameManager
     public void OnSensorLayoutLoaded(string data)
     {
         itemsInJson = JsonUtility.FromJson<Items>(data);
+        Debug.Log("broadcasting Sensor Layout from OnSensorLayoutLoaded");
         if (OnSensorLayoutUpdated != null)
         {
             OnSensorLayoutUpdated();
         }
-        Debug.Log("broadcasting Sensor Layout from OnSensorLayoutLoaded");
 
         StartCoroutine(_network.GetSensorTempJson(107, OnSensorTempLoaded));
     }
 
     public void OnSensorTempLoaded(string data)
     {
+        ParseJsonDataForSensorTemp(data);
+
+        Debug.Log("broadcasting SensorTemp from OnSensorTempLoaded");
+        if (OnSensorTempUpdated != null)
+        {
+            OnSensorTempUpdated();
+        }
+
+        status = ManagerStatus.Started;
+    }
+
+    private void ParseJsonDataForSensorTemp(string data)
+    {
         JSONNode N = JSON.Parse(data);
-        ListOfSensorTemp = new List<SensorTemp>();
-        EpochTimings = new List<int>();
 
         foreach (JSONNode item_value in N["time"])
         {
@@ -58,10 +71,10 @@ public class SensorManager : MonoBehaviour, IGameManager
         foreach (JSONNode item in N["data"])
         {
             SensorTemp Sensor = new SensorTemp();
-            Sensor.min = new List<double>();
-            Sensor.max = new List<double>();
-            Sensor.count = new List<double>();
-            Sensor.value = new List<double>();
+            Sensor.min = new List<float>();
+            Sensor.max = new List<float>();
+            Sensor.count = new List<float>();
+            Sensor.value = new List<float>();
 
             Sensor.sensor_name = item["sensor"][0].Value;
             Sensor.parameter = item["parameter"][0].Value;
@@ -69,53 +82,43 @@ public class SensorManager : MonoBehaviour, IGameManager
 
             foreach (JSONNode item_value in item["min"])
             {
-                Sensor.min.Add(item_value.AsDouble);
+                Sensor.min.Add(item_value.AsFloat);
             }
             foreach (JSONNode item_value in item["max"])
             {
-                Sensor.max.Add(item_value.AsDouble);
+                Sensor.max.Add(item_value.AsFloat);
             }
             foreach (JSONNode item_value in item["count"])
             {
-                Sensor.count.Add(item_value.AsDouble);
+                Sensor.count.Add(item_value.AsFloat);
             }
             foreach (JSONNode item_value in item["value"])
             {
-                Sensor.value.Add(item_value.AsDouble);
+                Sensor.value.Add(item_value.AsFloat);
             }
 
             ListOfSensorTemp.Add(Sensor);
         }
-
-        if (OnSensorTempUpdated != null)
-        { 
-            OnSensorTempUpdated();
-        }
-        Debug.Log("broadcasting SensorTemp from OnSensorTempLoaded");
-
-        status = ManagerStatus.Started;
     }
 
-    public Dictionary<int, double> GetAirTemp(string GameObjectName)
+    public Dictionary<int, float> GetAirTemp(string GameObjectName)
     {
-        //Dictionary<int, double> air_temperature;
-        air_temperature = new Dictionary<int, double>();
-
+        Dictionary<int,float> air_temperature = new Dictionary<int, float>();
+        
         foreach (var SensorTemp in ListOfSensorTemp) // store each Temp(key) with each Timings(value) in Dictionary 
         {
             if (GameObjectName == SensorTemp.sensor_name)
             {
-                //Debug.Log("airtemp added for sensor: " + GameObjectName);
+                Debug.Log("airtemp added for sensor: " + GameObjectName);
                 for (int ii = 0; ii < EpochTimings.Count; ii++)
                 {
                     air_temperature.Add(EpochTimings[ii], SensorTemp.value[ii]);
-                    Debug.Log("airtemp added for sensor: " + GameObjectName);
-                    Debug.Log("SensorTemp.value: " + SensorTemp.value[ii]); ;
+                    Debug.Log("SensorTemp.value added: " + SensorTemp.value[ii]); 
                 }
-                foreach (var items in air_temperature)
+                /*foreach (var items in air_temperature)
                 {
-                    Debug.Log(items.Key + " " + items.Value + " SensorName " + GameObjectName);
-                }
+                    Debug.Log(items.Key + " " + items.Value + " SensorName: " + GameObjectName);
+                }*/
             }
             else
                 Debug.Log("Game Object Name: " + GameObjectName + "didnt match with name: " + SensorTemp.sensor_name);
@@ -124,12 +127,13 @@ public class SensorManager : MonoBehaviour, IGameManager
     }
 }
 
+
 public class SensorTemp //need to put out of main class so that can call in Script:EVSensor using Foreach (SensorTemp varaible)
 {
-    public List<double> min { get; set; }
-    public List<double> max { get; set; }
-    public List<double> count { get; set; }
-    public List<double> value { get; set; }
+    public List<float> min { get; set; }
+    public List<float> max { get; set; }
+    public List<float> count { get; set; }
+    public List<float> value { get; set; }
     public string parameter { get; set; }
     public string sensor_name { get; set; } // why cant private set?
 }
