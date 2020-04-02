@@ -19,34 +19,8 @@ public class EVSensor : MonoBehaviour
         SensorManager.OnSensorTempUpdated -= OnSensorLayoutAndTempUpdated;
     }
 
-    /*private void Start()
-    {
-        //Debug.Log("SensorName: " + this.gameObject.name);
-        Debug.Log("EVsensor Initialized: " + gameObject.name);
-        startTiming = Managers.Sensors.EpochTimings[0];
-        Debug.Log("EpochTimings.Count: " + startTiming);
-        air_temperature = Managers.Sensors.GetAirTemp(gameObject.name);
-        foreach (var items in air_temperature)
-        {
-            Debug.Log(items.Key + " " + items.Value + " SensorName " + gameObject.name);
-
-        }
-    }*/
     void Update()
     {
-        /*Debug.Log("SensorName: " + this.gameObject.name);
-        foreach (var items in air_temperature)
-        {
-            Debug.Log(items.Key + " " + items.Value);
-        }
-        foreach (var items in Managers.Sensors.EpochTimings)
-        {
-            Debug.Log("Set of Epoch Timings: " + items);
-        }*/
-            //Debug.Log(TempTimings[0]);
-        //Debug.Log(startTiming);
-
-
         /*Debug.Log("Startof Timer " + startTiming);       //Timer
         for (int jj = 0; jj < TempTimings.Count; jj++)
             if (startTiming == TempTimings[jj])
@@ -62,6 +36,15 @@ public class EVSensor : MonoBehaviour
         Debug.Log("received SensorTemp from OnSensorTempLoaded for Sensor: " + gameObject.name);
         //Debug.Log("Initiated SensorName: " + this.gameObject.name);
 
+        foreach (var SensorTemp in Managers.Sensors.ListOfSensorTemp)
+        {
+            if (gameObject.name == SensorTemp.sensor_name)
+            {
+                Temp = SensorTemp.value[0];
+                Debug.Log("Temp of Sensor: " + gameObject.name + " " + Temp);
+            }
+        }
+        //GetAirTemp(Managers.Sensors.EpochTimings, Managers.Sensors.ListOfSensorTemp);
         //air_temperature = Managers.Sensors.GetAirTemp(gameObject.name);
         /*foreach (var items in air_temperature)
         {
@@ -69,8 +52,30 @@ public class EVSensor : MonoBehaviour
         }*/
     }
 
+    private void GetAirTemp(List<int> EpochTimings, List<SensorTemp> ListOfSensorTemp)
+    { 
 
-        void ChangeSensorTemp (int key)
+        foreach (var SensorTemp in ListOfSensorTemp) // store each Temp(key) with each Timings(value) in Dictionary 
+        {
+            if (gameObject.name == SensorTemp.sensor_name)
+            {
+                Debug.Log("airtemp added for sensor: " + gameObject.name);
+                for (int ii = 0; ii < EpochTimings.Count; ii++)
+                {
+                    air_temperature.Add(EpochTimings[ii], SensorTemp.value[ii]);
+                    Debug.Log("SensorTemp.value added: " + SensorTemp.value[ii]);
+                }
+                /*foreach (var items in air_temperature)
+                {
+                    Debug.Log(items.Key + " " + items.Value + " SensorName: " + GameObjectName);
+                }*/
+            }
+            else
+                Debug.Log("Game Object Name: " + gameObject.name + "didnt match with name: " + SensorTemp.sensor_name);
+        }
+    }
+
+    void ChangeSensorTemp (int key)
     {
         Temp = air_temperature[key];
         Debug.Log(this.gameObject.name + " " + Temp);

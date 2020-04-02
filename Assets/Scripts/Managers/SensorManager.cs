@@ -16,8 +16,8 @@ public class SensorManager : MonoBehaviour, IGameManager
     public static event SensorTempUpdated OnSensorTempUpdated;
 
     public Items itemsInJson { get; private set; }
-    private List<SensorTemp> ListOfSensorTemp { get; set; }
-    private List<int> EpochTimings { get; set; }
+    public List<SensorTemp> ListOfSensorTemp { get; private set; }
+    public List<int> EpochTimings { get; private set; }
     //public Dictionary<int, float> air_temperature;
 
     public void Startup(NetworkService service)
@@ -101,7 +101,7 @@ public class SensorManager : MonoBehaviour, IGameManager
         }
     }
 
-    public Dictionary<int, float> GetAirTemp(string GameObjectName)
+    /*public Dictionary<int, float> GetAirTemp(string GameObjectName)
     {
         Dictionary<int,float> air_temperature = new Dictionary<int, float>();
         
@@ -118,13 +118,13 @@ public class SensorManager : MonoBehaviour, IGameManager
                 /*foreach (var items in air_temperature)
                 {
                     Debug.Log(items.Key + " " + items.Value + " SensorName: " + GameObjectName);
-                }*/
+                }
             }
             else
                 Debug.Log("Game Object Name: " + GameObjectName + "didnt match with name: " + SensorTemp.sensor_name);
         }
         return air_temperature;
-    }
+    }*/
 }
 
 
