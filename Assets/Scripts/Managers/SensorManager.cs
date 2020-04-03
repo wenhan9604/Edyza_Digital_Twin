@@ -16,9 +16,8 @@ public class SensorManager : MonoBehaviour, IGameManager
     public static event SensorTempUpdated OnSensorTempUpdated;
 
     public Items itemsInJson { get; private set; }
-    public List<SensorTemp> ListOfSensorTemp { get; private set; }
-    public List<int> EpochTimings { get; private set; }
-    //public Dictionary<int, float> air_temperature;
+    private List<SensorTemp> ListOfSensorTemp { get;  set; }
+    private List<int> EpochTimings { get;  set; }
 
     public void Startup(NetworkService service)
     {
@@ -28,7 +27,6 @@ public class SensorManager : MonoBehaviour, IGameManager
         ListOfSensorTemp = new List<SensorTemp>();
         EpochTimings = new List<int>();
 
-        //StartCoroutine(_network.GetSensorTempJson(107, OnSensorTempLoaded));
         StartCoroutine(_network.GetSensorLayoutJson(OnSensorLayoutLoaded));
 
         status = ManagerStatus.Initializing;
@@ -78,7 +76,7 @@ public class SensorManager : MonoBehaviour, IGameManager
 
             Sensor.sensor_name = item["sensor"][0].Value;
             Sensor.parameter = item["parameter"][0].Value;
-            //Debug.Log("Sensor Parsed: " + Sensor.sensor_name);
+            //Debug.Log("Sensor: " + Sensor.sensor_name + "JSON value.count = " + item["value"].Count); //to check for the number of counts in JSON data
 
             foreach (JSONNode item_value in item["min"])
             {
@@ -96,35 +94,31 @@ public class SensorManager : MonoBehaviour, IGameManager
             {
                 Sensor.value.Add(item_value.AsFloat);
             }
-
+            /* To check the count of array inside the Sensor's Variable
+            Debug.Log("Sensor: " + Sensor.sensor_name + "value.count = " + Sensor.value.Count);
+            Debug.Log("Sensor: " + Sensor.sensor_name + "count.count = " + Sensor.count.Count);
+            Debug.Log("Sensor: " + Sensor.sensor_name + "max.count = " + Sensor.max.Count);
+            */
             ListOfSensorTemp.Add(Sensor);
         }
     }
 
-    /*public Dictionary<int, float> GetAirTemp(string GameObjectName)
+    public Dictionary<int, float> GetAirTemp(string GameObjectName) // send Dictioanry with each Temp(key) with each Timings(value) 
     {
         Dictionary<int,float> air_temperature = new Dictionary<int, float>();
         
-        foreach (var SensorTemp in ListOfSensorTemp) // store each Temp(key) with each Timings(value) in Dictionary 
+        foreach (var SensorTemp in ListOfSensorTemp)
         {
             if (GameObjectName == SensorTemp.sensor_name)
             {
-                Debug.Log("airtemp added for sensor: " + GameObjectName);
-                for (int ii = 0; ii < EpochTimings.Count; ii++)
+                for (int ii = 0; ii < SensorTemp.value.Count; ii++) //IMPT: must put value.count as it is lower than Epoch.count
                 {
                     air_temperature.Add(EpochTimings[ii], SensorTemp.value[ii]);
-                    Debug.Log("SensorTemp.value added: " + SensorTemp.value[ii]); 
-                }
-                /*foreach (var items in air_temperature)
-                {
-                    Debug.Log(items.Key + " " + items.Value + " SensorName: " + GameObjectName);
                 }
             }
-            else
-                Debug.Log("Game Object Name: " + GameObjectName + "didnt match with name: " + SensorTemp.sensor_name);
         }
         return air_temperature;
-    }*/
+    }
 }
 
 
