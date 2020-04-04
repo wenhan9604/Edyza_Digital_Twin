@@ -6,8 +6,8 @@ public class Pixel : MonoBehaviour
 {
     [SerializeField] private Color coolColor = new Vector4(0, 0.8f, 0.8f, 0.3f);
     [SerializeField] private Color warmColor = new Vector4(0.8f, 0, 0, 0.3f);
-    [SerializeField] private float MaxTemp = 80f;
-    [SerializeField] private float MinTemp = 60f;
+    [SerializeField] private float MaxTemp = 100f;
+    [SerializeField] private float MinTemp = 0f;
     [SerializeField] private float Temp;
     private GameObject[] EVArray;
 
@@ -18,12 +18,12 @@ public class Pixel : MonoBehaviour
         
     }
 
-    /*void Update()
+    void Update()
     {
-        Temp = TempCal(EVArray);
+        /*Temp = TempCal(EVArray);
         //Debug.Log("Temp of Spot " + Temp);
-        ColorChanger(Temp);
-    }*/
+        ColorChanger(Temp);*/
+    }
 
     private float TempCal(GameObject[] EVArray) 
     {

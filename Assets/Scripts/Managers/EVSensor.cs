@@ -10,7 +10,6 @@ public class EVSensor : MonoBehaviour
     private int FirstTiming;
     private int LastTiming;
 
-
     void Awake()
     {
         SensorManager.OnSensorTempUpdated += OnSensorLayoutAndTempUpdated;
@@ -21,22 +20,11 @@ public class EVSensor : MonoBehaviour
         SensorManager.OnSensorTempUpdated -= OnSensorLayoutAndTempUpdated;
     }
 
-    void Update()
+    private void Update()
     {
-        while ( FirstTiming<=LastTiming)
-        {
-            FirstTiming += (int)Time.deltaTime;
-            Debug.Log("Timer for start time " + FirstTiming);
-        }
-        /*Debug.Log("Startof Timer " + startTiming);       //Timer
-        for (int jj = 0; jj < TempTimings.Count; jj++)
-            if (startTiming == TempTimings[jj])
-                ChangeSensorTemp(startTiming);
+        Debug.Log("Current Temp" + Temp + " " + gameObject.name);
 
-        startTiming += (int)Time.deltaTime;
-        */
     }
-
 
     private void OnSensorLayoutAndTempUpdated()
     {
@@ -50,15 +38,19 @@ public class EVSensor : MonoBehaviour
             LastTiming = SetOfTimings[SetOfTimings.Count - 1];
         }
 
+        Temp = air_temperature[FirstTiming];
+        Debug.Log("Temp at First timing: " + Temp + " " + gameObject.name);
+
         StartCoroutine(StartTimer());
+
         /*Debug.Log(FirstTiming + " FirstTiming SensorName: " + gameObject.name);
         Debug.Log(LastTiming + " LastTiming SensorName: " + gameObject.name);
-
+        
         foreach (var items in SetOfTimings)
         {
             Debug.Log(items + " SensorName: " + gameObject.name);
         }
-
+        
         foreach (var items in air_temperature)
         {
             Debug.Log(items.Key + " " + items.Value + " SensorName: " + gameObject.name);
@@ -68,21 +60,21 @@ public class EVSensor : MonoBehaviour
 
     private IEnumerator StartTimer()
     {
-        /*while ( FirstTiming<=LastTiming)
+        while ( FirstTiming<=LastTiming)
         {
-            FirstTiming += (int)Time.deltaTime;
-            Debug.Log("Timer for start time " + FirstTiming);
-            yield return null;
-        }*/
+            if (FirstTiming == 1582834505)
+                ChangeSensorTemp(1582834950);
 
-        yield return null;
-
-        
+            Debug.Log("Timer for start time " + FirstTiming + " " + gameObject.name);
+            FirstTiming += 1;
+            yield return new WaitForSeconds(1f);
+        }      
     }
 
     void ChangeSensorTemp (int key)
     {
         Temp = air_temperature[key];
-        Debug.Log(this.gameObject.name + " " + Temp);
+        Debug.Log("Temp changed: " + gameObject.name + " " + Temp);
+
     }
 }
