@@ -38,7 +38,10 @@ public class NetworkService
         int count = 1;
 
         //string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm="+cur_time+"&start_tm="+start_time+"&parameter="+parameter+"&company_id="+company_ID+"&count="+count;
-        string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=1582836296&start_tm=1582834496&parameter=air_temperature&company_id=107&count=4";
+        //string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=1582836296&start_tm=1582834496&parameter=air_temperature&company_id=107&count=4";
+        string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=1585999800&start_tm=1585998000&parameter=air_temperature&company_id=107&count=20";
+        //current time , 30 mins apart , 20 counts 
+
         return CallAPI(SensorTempURL, callback);
     }
 }

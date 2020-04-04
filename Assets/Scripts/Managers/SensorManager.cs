@@ -65,7 +65,7 @@ public class SensorManager : MonoBehaviour, IGameManager
         {
             EpochTimings.Add(item_value);
         }
-
+        Debug.Log("Epochtimings.Count = " + EpochTimings.Count);
         foreach (JSONNode item in N["data"])
         {
             SensorTemp Sensor = new SensorTemp();
@@ -94,11 +94,12 @@ public class SensorManager : MonoBehaviour, IGameManager
             {
                 Sensor.value.Add(item_value.AsFloat);
             }
-            /* To check the count of array inside the Sensor's Variable
+            /*To check the count of array inside the Sensor's Variable
             Debug.Log("Sensor: " + Sensor.sensor_name + "value.count = " + Sensor.value.Count);
             Debug.Log("Sensor: " + Sensor.sensor_name + "count.count = " + Sensor.count.Count);
             Debug.Log("Sensor: " + Sensor.sensor_name + "max.count = " + Sensor.max.Count);
             */
+
             ListOfSensorTemp.Add(Sensor);
         }
     }
