@@ -65,7 +65,8 @@ public class SensorManager : MonoBehaviour, IGameManager
         {
             EpochTimings.Add(item_value);
         }
-        Debug.Log("Epochtimings.Count = " + EpochTimings.Count);
+        //Debug.Log("Epochtimings.Count = " + EpochTimings.Count);
+
         foreach (JSONNode item in N["data"])
         {
             SensorTemp Sensor = new SensorTemp();

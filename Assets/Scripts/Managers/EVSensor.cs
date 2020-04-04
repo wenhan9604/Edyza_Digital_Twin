@@ -6,12 +6,11 @@ using UnityEngine;
 public class EVSensor : MonoBehaviour
 {
     private Dictionary<int, float> air_temperature;
-    public float Temp { get; set; }
+    public float Temp { get; private set; }
     private List<int> SetOfTimings;
     private int FirstTiming;
     private int LastTiming;
 
-   
     void Awake()
     {
         SensorManager.OnSensorTempUpdated += OnSensorLayoutAndTempUpdated;
@@ -20,11 +19,6 @@ public class EVSensor : MonoBehaviour
     void OnDestroy()
     {
         SensorManager.OnSensorTempUpdated -= OnSensorLayoutAndTempUpdated;
-    }
-
-    private void Update()
-    {
-        //Debug.Log("Current Temp" + Temp + " " + gameObject.name);
     }
 
     private void OnSensorLayoutAndTempUpdated()
@@ -62,10 +56,13 @@ public class EVSensor : MonoBehaviour
 
     private IEnumerator StartTimer(int counter)
     {
-        while ( counter<=LastTiming)
+        while (counter<=LastTiming)
         {
-            if (counter == 1582834505)
-                ChangeSensorTemp(1582834950);
+            for (int ii = 0; ii < SetOfTimings.Count; ii++)
+            {
+                if (counter == SetOfTimings[ii])
+                    ChangeSensorTemp(SetOfTimings[ii]);
+            }
 
             Debug.Log("Counter: " + counter + " " + gameObject.name);
             counter += 1;

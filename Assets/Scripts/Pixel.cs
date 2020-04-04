@@ -6,12 +6,12 @@ public class Pixel : MonoBehaviour
 {
     [SerializeField] private Color coolColor = new Vector4(0, 0.8f, 0.8f, 0.3f);
     [SerializeField] private Color warmColor = new Vector4(0.8f, 0, 0, 0.3f);
-    [SerializeField] private float MaxTemp = 25f;
-    [SerializeField] private float MinTemp = 24f; //have to set in inspector
+    [SerializeField] private float MaxTemp = 23.5f;
+    [SerializeField] private float MinTemp = 22f; //have to set in inspector
     [SerializeField] private float Temp;
     private GameObject[] EVArray;
 
-    /*void Awake()
+    void Awake()
     {
         SensorManager.OnSensorTempUpdated += OnSensorLayoutAndTempUpdated;
     }
@@ -34,7 +34,7 @@ public class Pixel : MonoBehaviour
 
         EVArray = GameObject.FindGameObjectsWithTag("EVSensor");
         //Debug.Log(EVArray.Length);
-    }*/
+    }
 
 
     private float TempCal(GameObject[] EVArray) 
