@@ -6,10 +6,18 @@ using UnityEngine;
 public class EVSensor : MonoBehaviour
 {
     private Dictionary<int, float> air_temperature;
-    public float Temp { get; private set; }
+    private Dictionary<int, float> max_air_temperature;
+    private Dictionary<int, float> min_air_temperature;
     private List<int> SetOfTimings;
     private int FirstTiming;
     private int LastTiming;
+
+    public float Temp { get; private set; }
+    public float MaxTemp { get; private set; }
+    public float MinTemp { get; private set; }
+
+    public delegate void ChangeEVSensorTemp();
+    public static event ChangeEVSensorTemp OnChangeEVSensorTemp;
 
     void Awake()
     {
@@ -27,15 +35,14 @@ public class EVSensor : MonoBehaviour
 
         air_temperature = Managers.Sensors.GetAirTemp(gameObject.name);
         SetOfTimings = new List<int>(air_temperature.Keys);
+        max_air_temperature = Managers.Sensors.GetMaxAirTemp(gameObject.name);
+        min_air_temperature = Managers.Sensors.GetMinAirTemp(gameObject.name);
 
-        if (SetOfTimings.Count != 0) // LP: to set boolean for int variables, set != 0 instead of null
+        if (SetOfTimings.Count != 0) 
         {
             FirstTiming = SetOfTimings[0];
             LastTiming = SetOfTimings[SetOfTimings.Count - 1];
         }
-
-        Temp = air_temperature[FirstTiming];
-        Debug.Log("Temp at First timing: " + Temp + " " + gameObject.name);
 
         StartCoroutine(StartTimer(FirstTiming));
 
@@ -47,7 +54,7 @@ public class EVSensor : MonoBehaviour
             Debug.Log(items + " SensorName: " + gameObject.name);
         }
         
-        foreach (var items in air_temperature)
+        foreach (var items in min_air_temperature)
         {
             Debug.Log(items.Key + " " + items.Value + " SensorName: " + gameObject.name);
         }*/
@@ -64,7 +71,7 @@ public class EVSensor : MonoBehaviour
                     ChangeSensorTemp(SetOfTimings[ii]);
             }
 
-            Debug.Log("Counter: " + counter + " " + gameObject.name);
+            //Debug.Log("Counter: " + counter + " " + gameObject.name);
             counter += 1;
             yield return new WaitForSeconds(1f);
         }      
@@ -73,6 +80,17 @@ public class EVSensor : MonoBehaviour
     void ChangeSensorTemp (int key)
     {
         Temp = air_temperature[key];
-        Debug.Log("Temp changed: " + gameObject.name + " " + Temp);
+        MaxTemp = max_air_temperature[key];
+        MinTemp = min_air_temperature[key];
+
+        Debug.Log("broadcasting EVSensorTemp from ChangeSensorTemp,EVSensor");
+        if (OnChangeEVSensorTemp != null)
+        {
+            OnChangeEVSensorTemp();
+        }
+
+        //Debug.Log("Temp changed: " + gameObject.name + " " + Temp);
+        //Debug.Log("MaxTemp changed: " + gameObject.name + " " + MaxTemp);
+        //Debug.Log("MinTemp changed: " + gameObject.name + " " + MinTemp
     }
 }

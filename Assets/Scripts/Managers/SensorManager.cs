@@ -121,6 +121,42 @@ public class SensorManager : MonoBehaviour, IGameManager
         }
         return air_temperature;
     }
+
+    public Dictionary<int, float> GetMaxAirTemp(string GameObjectName) // send Dictioanry with each Temp(key) with each Timings(value) 
+    {
+        Dictionary<int, float> max_air_temperature = new Dictionary<int, float>();
+
+        foreach (var SensorTemp in ListOfSensorTemp)
+        {
+            if (GameObjectName == SensorTemp.sensor_name)
+            {
+                for (int ii = 0; ii < SensorTemp.max.Count; ii++) //IMPT: must put value.count as it is lower than Epoch.count
+                {
+                    max_air_temperature.Add(EpochTimings[ii], SensorTemp.max[ii]);
+                }
+                //Debug.Log("Max_AirTemp Dict count : " + max_air_temperature.Count + " " + GameObjectName);
+            }
+        }
+        return max_air_temperature;
+    }
+
+    public Dictionary<int, float> GetMinAirTemp(string GameObjectName) // send Dictioanry with each Temp(key) with each Timings(value) 
+    {
+        Dictionary<int, float> min_air_temperature = new Dictionary<int, float>();
+
+        foreach (var SensorTemp in ListOfSensorTemp)
+        {
+            if (GameObjectName == SensorTemp.sensor_name)
+            {
+                for (int ii = 0; ii < SensorTemp.min.Count; ii++) //IMPT: must put value.count as it is lower than Epoch.count
+                {
+                    min_air_temperature.Add(EpochTimings[ii], SensorTemp.min[ii]);
+                }
+                //Debug.Log("Max_AirTemp Dict count : " + max_air_temperature.Count + " " + GameObjectName);
+            }
+        }
+        return min_air_temperature;
+    }
 }
 
 
