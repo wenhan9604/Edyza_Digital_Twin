@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class Pixel : MonoBehaviour
 {
-    [SerializeField] private Color coolColor = new Vector4(0, 0.8f, 0.8f, 0.3f);
-    [SerializeField] private Color warmColor = new Vector4(0.8f, 0, 0, 0.3f);
+    [SerializeField] private Color RedColor = new Vector4(1f, 0, 0, 0.3f);
+    [SerializeField] private Color YellowColor = new Vector4(1f, 1f, 0, 0.3f);
+    [SerializeField] private Color GreenColor = new Vector4(0, 1f, 0, 0.3f);
+    [SerializeField] private Color CyanColor = new Vector4(0, 1f, 1f, 0.3f);
+    [SerializeField] private Color BlueColor = new Vector4(0, 0, 1f, 0.3f);
+
     [SerializeField] private float MaxTemp;
     [SerializeField] private float MinTemp; //have to set in inspector
     [SerializeField] private float Temp;
@@ -24,25 +28,25 @@ public class Pixel : MonoBehaviour
 
     }
 
-    void Update()
-    {
-        //Temp = TempCal(EVArray);
-        //MaxTemp = FindMaxTemp(EVArray);
-        //MinTemp = FindMinTemp(EVArray);
-
-        //Debug.Log("Temp of Spot " + Temp);
-        //Debug.Log("Max Temp: " + MaxTemp);
-        //Debug.Log("Min Temp: " + MinTemp);
-
-        //ColorChanger(Temp);
-    }
-
     void OnSensorLayoutAndTempUpdated()
     {
         EVArray = GameObject.FindGameObjectsWithTag("EVSensor");
         //Debug.Log(EVArray.Length);
     }
 
+    void OnChangeEVSensorTemp()
+    {
+        Temp = TempCal(EVArray);
+        MaxTemp = FindMaxTemp(EVArray);
+        MinTemp = FindMinTemp(EVArray);
+        Debug.Log("Temp of Spot " + Temp);
+
+        //Problem with Min Temp during Startup
+        //Debug.Log("MaxTemp is: " + MaxTemp);
+        //Debug.Log("MinTemp Is: " + MinTemp);
+
+        ColorChanger(Temp);
+    }
 
     private float TempCal(GameObject[] EVArray) 
     {
@@ -85,19 +89,40 @@ public class Pixel : MonoBehaviour
 
     void ColorChanger(float Temp)
     {
-        var percentage = Mathf.InverseLerp(MinTemp, MaxTemp, Temp);
-        GetComponent<MeshRenderer>().material.color = Color.Lerp(coolColor, warmColor, percentage);
         //Debug.Log("Colour %: " + percentage);
-    }
 
-    void OnChangeEVSensorTemp ()
-    {
-        Temp = TempCal(EVArray);
-        MaxTemp = FindMaxTemp(EVArray);
-        MinTemp = FindMinTemp(EVArray);
+        float intervals = (MaxTemp - MinTemp) / 4;
+        float UpperPoint = intervals * 3 + MinTemp;
+        float MidPoint = intervals*2  + MinTemp;
+        float LowerPoint = intervals + MinTemp;
 
-        Debug.Log("Temp of Spot " + Temp);
-        ColorChanger(Temp);
+        //Debug.Log("This is UpperPoint: " + UpperPoint);
+        //Debug.Log("This is MidPoint: " + MidPoint);
+        //Debug.Log("This is LowerPoint: " + LowerPoint);
+
+        if (Temp<=MaxTemp && Temp > UpperPoint )
+        {
+            var percentage = Mathf.InverseLerp(UpperPoint, MaxTemp, Temp);
+            GetComponent<MeshRenderer>().material.color = Color.Lerp(YellowColor, RedColor, percentage);
+        }
+
+        else if (Temp <= UpperPoint && Temp > MidPoint)
+        {
+            var percentage = Mathf.InverseLerp(MidPoint, UpperPoint, Temp);
+            GetComponent<MeshRenderer>().material.color = Color.Lerp(GreenColor, YellowColor, percentage);
+        }
+
+        else if (Temp <= MidPoint && Temp > LowerPoint)
+        {
+            var percentage = Mathf.InverseLerp(LowerPoint, MidPoint, Temp);
+            GetComponent<MeshRenderer>().material.color = Color.Lerp(CyanColor, GreenColor, percentage);
+        }
+
+        else if (Temp <= LowerPoint && Temp > MinTemp)
+        {
+            var percentage = Mathf.InverseLerp(MinTemp, LowerPoint, Temp);
+            GetComponent<MeshRenderer>().material.color = Color.Lerp(BlueColor, CyanColor, percentage);
+        }
 
     }
 }
