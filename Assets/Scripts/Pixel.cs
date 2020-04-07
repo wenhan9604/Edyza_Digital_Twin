@@ -8,7 +8,7 @@ public class Pixel : MonoBehaviour
     [SerializeField] private Color YellowColor = new Vector4(1f, 1f, 0, 0.3f);
     [SerializeField] private Color GreenColor = new Vector4(0, 1f, 0, 0.3f);
     [SerializeField] private Color CyanColor = new Vector4(0, 1f, 1f, 0.3f);
-    [SerializeField] private Color BlueColor = new Vector4(0, 0, 1f, 0.3f);
+    [SerializeField] private Color BlueColor = new Vector4(0, 0, 0.8f, 0.3f);
 
     [SerializeField] private float MaxTemp;
     [SerializeField] private float MinTemp; //have to set in inspector
@@ -89,8 +89,6 @@ public class Pixel : MonoBehaviour
 
     void ColorChanger(float Temp)
     {
-        //Debug.Log("Colour %: " + percentage);
-
         float intervals = (MaxTemp - MinTemp) / 4;
         float UpperPoint = intervals * 3 + MinTemp;
         float MidPoint = intervals*2  + MinTemp;
@@ -123,6 +121,5 @@ public class Pixel : MonoBehaviour
             var percentage = Mathf.InverseLerp(MinTemp, LowerPoint, Temp);
             GetComponent<MeshRenderer>().material.color = Color.Lerp(BlueColor, CyanColor, percentage);
         }
-
     }
 }
