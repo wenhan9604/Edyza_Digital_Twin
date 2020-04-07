@@ -33,6 +33,7 @@ public class FPSInput : MonoBehaviour {
 		movement *= Time.deltaTime;
 		movement = transform.TransformDirection(movement);
 		_charController.Move(movement);
+		
 
 		if (Input.GetKeyDown(KeyCode.F))
 		{

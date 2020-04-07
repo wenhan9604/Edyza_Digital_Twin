@@ -72,6 +72,7 @@ public class EVSensor : MonoBehaviour
             }
 
             Debug.Log("Counter: " + counter + " " + gameObject.name);
+            Debug.Log("EVSensor Name and Temp: " + gameObject.name + " " + Temp);
             counter += 1;
             yield return new WaitForSeconds(1f);
         }      
