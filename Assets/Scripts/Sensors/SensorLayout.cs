@@ -1,37 +1,46 @@
-﻿/*using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using UnityEngine.Networking;
-using System;
 
-
-public class jsonParser : MonoBehaviour
+public class SensorLayout : MonoBehaviour
 {
     [SerializeField] GameObject EVSensorPrefab;
     [SerializeField] GameObject CSensorPrefab;
     private GameObject sensorInstance;
 
-    public static List<GameObject> EVList = new List<GameObject>();
-    public static List<GameObject> CanopyList = new List<GameObject>();
-    public static List<GameObject> OthersList = new List<GameObject>();
+    public List<GameObject> EVList;
+    public List<GameObject> CanopyList;
+    public List<GameObject> OthersList;
     private GameObject EVSensorsParent;
     private GameObject CanopySensorsParent;
     private GameObject OtherSensorsParent;
 
-    void Awake()
+    private void Awake()
     {
+        EVList = new List<GameObject>();
+        CanopyList = new List<GameObject>();
+        OthersList = new List<GameObject>();
         EVSensorsParent = new GameObject("EVSensors");
         CanopySensorsParent = new GameObject("CanopySensors");
         OtherSensorsParent = new GameObject("OtherSensors");
-        StartCoroutine(GetHTTP(ParseJson));    
-    }
-    public void ParseJson(string jsonString)
-    {
-        Items itemsinJson;
-        itemsinJson = Items.CreateFromJSON(jsonString);
 
-        foreach (Sensor sensor in itemsinJson.items)
+        SensorManager.OnSensorLayoutUpdated += OnSensorLayoutUpdated;
+    }
+
+    void OnDestroy()
+    {
+        SensorManager.OnSensorLayoutUpdated -= OnSensorLayoutUpdated;
+    }
+
+    private void OnSensorLayoutUpdated()
+    {
+        Debug.Log("received broad cast Sensor Layout from OnSensorLayoutLoaded");
+        InstantiateSensors(Managers.Sensors.itemsInJson.items);
+    }
+
+    void InstantiateSensors(Sensor[] itemArray)
+    {
+        foreach (var sensor in itemArray)
         {
             if (sensor.item_name == "Edyza sensor")
             {
@@ -56,28 +65,17 @@ public class jsonParser : MonoBehaviour
                 Vector3 position = convertPosToMetres(sensor.xpos, sensor.ypos, sensor.zpos);
                 sensorInstance.transform.position = position;
                 sensorInstance.name = sensor.sensor_name;
+                //Debug.Log("EVSensor Created: " + sensorInstance.name);
             }
-
         }
+        //Messenger.Broadcast(GameEvent.INSTANTIATED_SENSORS);
+        
         SetObjectsAsChild(EVSensorsParent, EVList);
         SetObjectsAsChild(CanopySensorsParent, CanopyList);
         SetObjectsAsChild(OtherSensorsParent, OthersList);
+
         SetEVSensorsActiveOnly();
-    }
-
-    public static IEnumerator GetHTTP( Action<string> HTTPFile)
-    {
-        UnityWebRequest www = UnityWebRequest.Get("http://legacy.edyza.net/php/get_file.php?file_name=/uploads/hello_edyza_107_3dlayout.json");
-        yield return www.SendWebRequest();
-
-        if (www.isNetworkError || www.isHttpError)
-        {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            HTTPFile(www.downloadHandler.text);
-        }
+        //Messenger.Broadcast(GameEvent.INSTANTIATED_SENSORS);
     }
     private Vector3 convertPosToMetres(float input, float input2, float input3)
     {
@@ -86,11 +84,13 @@ public class jsonParser : MonoBehaviour
         input3 *= 0.01f;
         return new Vector3(input, input2, input3);
     }
+
     void SetEVSensorsActiveOnly()
     {
         CanopySensorsParent.SetActive(false);
         OtherSensorsParent.SetActive(false);
     }
+
     void SetObjectsAsChild(GameObject parent, List<GameObject> list)
     {
         foreach (GameObject sensor in list)
@@ -98,33 +98,5 @@ public class jsonParser : MonoBehaviour
             //Debug.Log("EV Sensor position: " + GameObject.FindWithTag("EVSensor").transform.position.ToString("F4"));
             sensor.transform.parent = parent.transform;
         }
-
     }
 }
-
-[System.Serializable]
- public class Items
-{
-    public Sensor[] items;
-    public static Items CreateFromJSON(string jsonString)
-    {
-        return JsonUtility.FromJson<Items>(jsonString);
-    }
-}
-
-[System.Serializable]
-public class Sensor
-    {
-        public string item_name;
-        public float xpos;
-        public float ypos;
-        public float zpos;
-        public string sensor_name;
-    }*/
-
-
-
-
-
-
-

@@ -11,8 +11,8 @@ public class NetworkService
     private IEnumerator CallAPI(string url, Action<string> callback)
     {
         UnityWebRequest www = UnityWebRequest.Get(url);
-        yield return www.SendWebRequest();
 
+        yield return www.SendWebRequest();
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);
@@ -31,14 +31,16 @@ public class NetworkService
     public IEnumerator GetSensorTempJson (int company_ID, Action<string> callback)
     {
         DateTime epochStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        //int cur_time = (int)(DateTime.UtcNow - epochStart).TotalSeconds;
-        int cur_time = 1582836296; // use this for testing because current time will not have data
-        int start_time = cur_time - 60; //1800sec = 30 mins, duration = 30mins til now
+        int cur_time = (int)(DateTime.UtcNow - epochStart).TotalSeconds;
+        //Debug.Log("current time for Epoch" + cur_time);
+        int start_time = cur_time - 1800; //1800sec = 30 mins, duration = 30mins til now
         string parameter = "air_temperature";
-        int count = 4;
+        int count = 60;
 
-        string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm="+cur_time+"&start_tm="+start_time+"&parameter="+parameter+"&company_id="+company_ID+"&count="+count;
-        //string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=1582836296&start_tm=1582834496&parameter=air_temperature&company_id=107&count=4";
+        string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=" + cur_time + "&start_tm=" + start_time + "&parameter=" + parameter + "&company_id=" + company_ID + "&count=60";
+        //string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=1585999800&start_tm=1585998000&parameter=air_temperature&company_id=107&count=60";
+        //current time , 30 mins apart , 60 counts = 30 seconds interval 
+
         return CallAPI(SensorTempURL, callback);
     }
 }
