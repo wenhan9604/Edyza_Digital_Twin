@@ -32,7 +32,7 @@ public class NetworkService
     {
         DateTime epochStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         int cur_time = (int)(DateTime.UtcNow - epochStart).TotalSeconds;
-        Debug.Log("current time for Epoch" + cur_time);
+        //Debug.Log("current time for Epoch" + cur_time);
         int start_time = cur_time - 1800; //1800sec = 30 mins, duration = 30mins til now
         string parameter = "air_temperature";
         int count = 60;
