@@ -35,10 +35,10 @@ public class NetworkService
         //Debug.Log("current time for Epoch" + cur_time);
         int start_time = cur_time - 1800; //1800sec = 30 mins, duration = 30mins til now
         string parameter = "air_temperature";
-        int count = 60;
+        int count = 30;
 
-        string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=" + cur_time + "&start_tm=" + start_time + "&parameter=" + parameter + "&company_id=" + company_ID + "&count=60";
-        //string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=1585999800&start_tm=1585998000&parameter=air_temperature&company_id=107&count=60";
+        //string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=" + cur_time + "&start_tm=" + start_time + "&parameter=" + parameter + "&company_id=" + company_ID + "&count=" + count;
+        string SensorTempURL = "https://timescale.edyza.net/get_multivariate_data?end_tm=1585999800&start_tm=1585998000&parameter=air_temperature&company_id=107&count=30";
         //current time , 30 mins apart , 60 counts = 30 seconds interval 
 
         return CallAPI(SensorTempURL, callback);

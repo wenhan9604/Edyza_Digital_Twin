@@ -12,7 +12,7 @@ public class EVSensor : MonoBehaviour
     private int FirstTiming;
     private int LastTiming;
 
-    public float Temp { get; private set; }
+    public float Temp;
     public float MaxTemp { get; private set; }
     public float MinTemp { get; private set; }
 
