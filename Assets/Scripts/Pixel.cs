@@ -19,13 +19,14 @@ public class Pixel : MonoBehaviour
     {
         SensorManager.OnSensorTempUpdated += OnSensorLayoutAndTempUpdated;
         EVSensor.OnChangeEVSensorTemp += OnChangeEVSensorTemp;
+        PixelParent.OnPixelParentHeightChange += OnChangeEVSensorTemp;
     }
 
     void OnDestroy()
     {
         SensorManager.OnSensorTempUpdated -= OnSensorLayoutAndTempUpdated;
         EVSensor.OnChangeEVSensorTemp -= OnChangeEVSensorTemp;
-
+        PixelParent.OnPixelParentHeightChange -= OnChangeEVSensorTemp;
     }
 
     void OnSensorLayoutAndTempUpdated()
@@ -39,7 +40,7 @@ public class Pixel : MonoBehaviour
         Temp = TempCal(EVArray);
         MaxTemp = FindMaxTemp(EVArray);
         MinTemp = FindMinTemp(EVArray);
-        Debug.Log("Temp of Spot " + Temp);
+        //Debug.Log("Temp of Spot " + Temp);
 
         //Problem with Min Temp during Startup
         //Debug.Log("MaxTemp is: " + MaxTemp);
@@ -63,7 +64,7 @@ public class Pixel : MonoBehaviour
         return numerator / denom;
     }
 
-    private float FindMaxTemp (GameObject[] EVArray)
+    private float FindMaxTemp(GameObject[] EVArray)
     {
         List<float> MaxTempFromEVSensors = new List<float>();
 

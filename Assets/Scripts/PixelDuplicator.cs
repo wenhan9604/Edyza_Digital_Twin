@@ -7,15 +7,14 @@ public class PixelDuplicator : MonoBehaviour
     [SerializeField] private GameObject PixelPrefab;
     [SerializeField] private GameObject SizeOfRoom;
     [SerializeField] private GameObject FirstPixel;
+    [SerializeField] private GameObject PixelParent;
     private GameObject PixelInstance;
     private List<GameObject> PixelList;
-    private GameObject PixelParent;
     private float offsetX; 
     private float offsetZ;
 
     void Start()
     {
-        PixelParent = new GameObject("Pixels");
         PixelList = new List<GameObject>();
         DuplicateByGrid();
     }
