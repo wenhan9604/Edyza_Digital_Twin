@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Brookview Trial.unity
-    guid: dbf09d3de30932241b2086e909e1e17e
+    path: Assets/Scenes/Brookville GVR.unity
+    guid: 95ff97e95484c3b46a1549ef0a25e01d
   m_configObjects: {}

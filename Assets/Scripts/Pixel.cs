@@ -12,7 +12,7 @@ public class Pixel : MonoBehaviour
 
     [SerializeField] private float MaxTemp;
     [SerializeField] private float MinTemp; //have to set in inspector
-    [SerializeField] private float Temp;
+    public float Temp;
     private GameObject[] EVArray;
 
     void Awake()
@@ -35,16 +35,12 @@ public class Pixel : MonoBehaviour
         //Debug.Log(EVArray.Length);
     }
 
+    // When sensors' temp are updated, pixel temp is updated below
     void OnChangeEVSensorTemp()
     {
         Temp = TempCal(EVArray);
         MaxTemp = FindMaxTemp(EVArray);
         MinTemp = FindMinTemp(EVArray);
-        //Debug.Log("Temp of Spot " + Temp);
-
-        //Problem with Min Temp during Startup
-        //Debug.Log("MaxTemp is: " + MaxTemp);
-        //Debug.Log("MinTemp Is: " + MinTemp);
 
         ColorChanger(Temp);
     }

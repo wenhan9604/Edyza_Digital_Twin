@@ -68,14 +68,12 @@ public class SensorLayout : MonoBehaviour
                 //Debug.Log("EVSensor Created: " + sensorInstance.name);
             }
         }
-        //Messenger.Broadcast(GameEvent.INSTANTIATED_SENSORS);
         
         SetObjectsAsChild(EVSensorsParent, EVList);
         SetObjectsAsChild(CanopySensorsParent, CanopyList);
         SetObjectsAsChild(OtherSensorsParent, OthersList);
 
         SetEVSensorsActiveOnly();
-        //Messenger.Broadcast(GameEvent.INSTANTIATED_SENSORS);
     }
     private Vector3 convertPosToMetres(float input, float input2, float input3)
     {

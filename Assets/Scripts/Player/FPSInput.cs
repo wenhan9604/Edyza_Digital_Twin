@@ -14,7 +14,6 @@ public class FPSInput : MonoBehaviour {
 
 	[SerializeField] private Camera PlayerView;
 	[SerializeField] private Camera BirdEyeView;
-	[SerializeField] private PixelParent HeatMap;
 	
 	void Start() {
 		_charController = GetComponent<CharacterController>();
@@ -41,10 +40,5 @@ public class FPSInput : MonoBehaviour {
 			PlayerView.enabled = !PlayerView.enabled;
 			BirdEyeView.enabled = !BirdEyeView.enabled;
 		}
-		/*
-		if (Input.GetKeyDown(KeyCode.E))
-        {
-			PixelParent.ChangePixelParentHeight(0.1f);
-        }*/
 	}
 }

@@ -17,7 +17,14 @@ public class PixelDuplicator : MonoBehaviour
     {
         PixelList = new List<GameObject>();
         DuplicateByGrid();
+        UIController.onSwitchtoPlayerView += SetPixelCollider;
     }
+
+    void OnDisable()
+    {
+        UIController.onSwitchtoPlayerView -= SetPixelCollider;
+    }
+
     void DuplicateByGrid ()
     {
         offsetX = GetBounds(PixelPrefab).x;
@@ -66,6 +73,13 @@ public class PixelDuplicator : MonoBehaviour
             Vector3 size = new Vector3(boundsX, boundsY, boundsZ);
             return size;
         }
-        
+    }
+
+    private void SetPixelCollider(bool input)
+    {
+        foreach(GameObject Pixel in PixelList)
+        {
+            Pixel.GetComponent<BoxCollider>().enabled = input;
+        }
     }
 }
